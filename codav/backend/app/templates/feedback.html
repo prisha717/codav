@@ -1,0 +1,313 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>CODAV | Feedback</title>
+  <style>
+    :root {
+      --bg: #f6f8fb;
+      --surface: #ffffff;
+      --surface-soft: #f8fafc;
+      --border: #e2e8f0;
+      --text: #0f172a;
+      --muted: #64748b;
+      --accent: #2563eb;
+      --accent-hover: #1d4ed8;
+      --radius: 16px;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: Inter, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      min-height: 100vh;
+      margin: 0;
+      background: linear-gradient(to bottom, #f8fafc 0%, #f6f8fb 100%);
+      color: var(--text);
+    }
+
+    a {
+      color: inherit;
+      text-decoration: none;
+    }
+
+    .page {
+      width: 100%;
+      min-height: 100vh;
+      margin: 0;
+      padding: 24px 28px 36px;
+    }
+
+    .container {
+      width: 100%;
+      background: transparent;
+      border: none;
+      border-radius: 0;
+      box-shadow: none;
+      padding: 0;
+    }
+
+    .page-shell {
+      width: 100%;
+      margin-top: 24px;
+      background: rgba(255, 255, 255, 0.96);
+      border: 1px solid rgba(15, 23, 42, 0.08);
+      border-radius: 18px;
+      box-shadow: 0 10px 30px rgba(15, 23, 42, 0.06);
+      overflow: hidden;
+    }
+
+    .top-bar {
+      background: linear-gradient(135deg, #0f172a 0%, #172554 55%, #1d4ed8 100%);
+      color: white;
+      padding: 32px;
+    }
+
+    .top-bar h1 {
+      font-size: 2rem;
+      margin: 0 0 10px 0;
+    }
+
+    .top-bar p {
+      color: rgba(255, 255, 255, 0.84);
+      line-height: 1.6;
+      max-width: 900px;
+      margin: 0;
+    }
+
+    .content {
+      padding: 36px 32px;
+    }
+
+    .intro-box {
+      margin-bottom: 28px;
+      padding: 18px 20px;
+      background: #f8fafc;
+      border: 1px solid #e2e8f0;
+      border-radius: 18px;
+      color: #475569;
+      line-height: 1.6;
+      font-size: 0.95rem;
+    }
+
+    .question-card {
+      margin-bottom: 22px;
+      padding: 22px;
+      border: 1px solid #e2e8f0;
+      border-radius: 20px;
+      background: #ffffff;
+    }
+
+    .question-card h2 {
+      font-size: 1.08rem;
+      margin: 0 0 16px 0;
+      color: #0f172a;
+    }
+
+    .options {
+      display: grid;
+      gap: 12px;
+    }
+
+    .option-label {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 14px 16px;
+      border: 1px solid #dbe4f0;
+      border-radius: 14px;
+      background: #f9fbff;
+      cursor: pointer;
+      transition: border-color 0.2s ease, background 0.2s ease, transform 0.15s ease;
+    }
+
+    .option-label:hover {
+      border-color: #2563eb;
+      background: #f4f8ff;
+      transform: translateY(-1px);
+    }
+
+    .option-label input {
+      accent-color: #2563eb;
+      transform: scale(1.05);
+    }
+
+    .actions {
+      margin-top: 28px;
+      display: flex;
+      gap: 14px;
+      flex-wrap: wrap;
+      align-items: center;
+    }
+
+    .primary-btn,
+    .secondary-btn {
+      border: none;
+      border-radius: 12px;
+      padding: 12px 18px;
+      font-size: 0.95rem;
+      font-weight: 700;
+      cursor: pointer;
+      transition: transform 0.18s ease, box-shadow 0.18s ease, opacity 0.18s ease;
+    }
+
+    .primary-btn {
+      background: var(--accent);
+      color: white;
+      box-shadow: 0 14px 28px rgba(37, 99, 235, 0.18);
+    }
+
+    .primary-btn:hover {
+      background: var(--accent-hover);
+      transform: translateY(-1px);
+    }
+
+    .secondary-btn {
+      background: #eef2ff;
+      color: #1e3a8a;
+    }
+
+    .secondary-btn:hover {
+      transform: translateY(-1px);
+    }
+
+    .thank-you {
+      display: none;
+      margin-top: 24px;
+      padding: 18px 20px;
+      border-radius: 18px;
+      background: #effcf3;
+      border: 1px solid #bbf7d0;
+      color: #166534;
+      line-height: 1.6;
+      font-weight: 500;
+    }
+
+    .footer-note {
+      margin-top: 26px;
+      font-size: 0.9rem;
+      color: #64748b;
+      line-height: 1.6;
+    }
+
+    @media (max-width: 720px) {
+      .page {
+        padding: 16px 12px 28px;
+      }
+
+      .top-bar,
+      .content {
+        padding: 24px 20px;
+      }
+
+      .top-bar h1 {
+        font-size: 1.65rem;
+      }
+
+      .actions {
+        flex-direction: column;
+      }
+
+      .primary-btn,
+      .secondary-btn {
+        width: 100%;
+      }
+    }
+  </style>
+</head>
+
+<body>
+  <div class="page">
+    <div class="container">
+      {% include "navbar.html" %}
+
+      <div class="page-shell">
+        <div class="top-bar">
+          <h1>CODAV Feedback</h1>
+          <p>
+            This page demonstrates how structured user feedback could be gathered for the prototype.
+            Responses are not stored or analysed in this version.
+          </p>
+        </div>
+
+        <div class="content">
+          <div class="intro-box">
+            Please answer the questions below based on your experience of using CODAV.
+            This demo interface uses multiple-choice questions only and does not collect personal or sensitive information.
+          </div>
+
+          <form id="feedbackForm">
+            <div class="question-card">
+              <h2>1. How easy was CODAV to use?</h2>
+              <div class="options">
+                <label class="option-label"><input type="radio" name="ease_of_use" required> Very easy</label>
+                <label class="option-label"><input type="radio" name="ease_of_use"> Easy</label>
+                <label class="option-label"><input type="radio" name="ease_of_use"> Neutral</label>
+                <label class="option-label"><input type="radio" name="ease_of_use"> Difficult</label>
+                <label class="option-label"><input type="radio" name="ease_of_use"> Very difficult</label>
+              </div>
+            </div>
+
+            <div class="question-card">
+              <h2>2. How helpful were the visualisation recommendations?</h2>
+              <div class="options">
+                <label class="option-label"><input type="radio" name="recommendations" required> Very helpful</label>
+                <label class="option-label"><input type="radio" name="recommendations"> Helpful</label>
+                <label class="option-label"><input type="radio" name="recommendations"> Neutral</label>
+                <label class="option-label"><input type="radio" name="recommendations"> Unhelpful</label>
+                <label class="option-label"><input type="radio" name="recommendations"> Very unhelpful</label>
+              </div>
+            </div>
+
+            <div class="question-card">
+              <h2>3. Which mode did you prefer?</h2>
+              <div class="options">
+                <label class="option-label"><input type="radio" name="preferred_mode" required> Beginner mode</label>
+                <label class="option-label"><input type="radio" name="preferred_mode"> Expert mode</label>
+                <label class="option-label"><input type="radio" name="preferred_mode"> No preference</label>
+              </div>
+            </div>
+
+            <div class="question-card">
+              <h2>4. Would you use CODAV again for dataset exploration?</h2>
+              <div class="options">
+                <label class="option-label"><input type="radio" name="reuse" required> Yes</label>
+                <label class="option-label"><input type="radio" name="reuse"> Maybe</label>
+                <label class="option-label"><input type="radio" name="reuse"> No</label>
+              </div>
+            </div>
+
+            <div class="actions">
+              <button type="submit" class="primary-btn">Submit feedback</button>
+              <button type="reset" class="secondary-btn">Clear answers</button>
+            </div>
+          </form>
+
+          <div id="thankYouMessage" class="thank-you">
+            Thank you. Your response has not been stored; this page is included as a user interface prototype only.
+          </div>
+
+          <p class="footer-note">
+            No account is required to use this feedback interface, and no responses are saved in this prototype.
+          </p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const form = document.getElementById("feedbackForm");
+    const thankYouMessage = document.getElementById("thankYouMessage");
+
+    form.addEventListener("submit", function(event) {
+      event.preventDefault();
+      thankYouMessage.style.display = "block";
+      form.reset();
+      thankYouMessage.scrollIntoView({ behavior: "smooth", block: "nearest" });
+    });
+  </script>
+</body>
+</html>

@@ -1,0 +1,944 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <title>{{ dataset.name }} — Visualisation</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <style>
+        :root {
+            --bg: #f6f8fb;
+            --surface: #ffffff;
+            --surface-soft: #f8fafc;
+            --border: #e2e8f0;
+            --text: #0f172a;
+            --muted: #64748b;
+            --primary: #2563eb;
+            --primary-hover: #1d4ed8;
+            --accent: #2563eb;
+            --accent-soft: #dbeafe;
+            --success: #166534;
+            --success-soft: #dcfce7;
+            --danger: #b91c1c;
+            --danger-soft: #fee2e2;
+            --shadow: 0 10px 30px rgba(15, 23, 42, 0.05);
+            --radius: 16px;
+        }
+
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: Inter, system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+            margin: 0;
+            background: var(--bg);
+            color: var(--text);
+        }
+
+        a {
+            color: inherit;
+            text-decoration: none;
+        }
+
+        /* NAVBAR */
+        .navbar {
+            width: 100%;
+            min-height: 64px;
+            background: #ffffff;
+            border-bottom: 1px solid var(--border);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 10px 18px;
+            position: sticky;
+            top: 0;
+            z-index: 50;
+        }
+
+        .brand {
+            display: flex;
+            flex-direction: column;
+            gap: 2px;
+        }
+
+        .brand-title {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            font-size: 1.05rem;
+            font-weight: 800;
+            letter-spacing: -0.02em;
+        }
+
+        .brand-dot {
+            width: 9px;
+            height: 9px;
+            background: var(--primary);
+            border-radius: 999px;
+            display: inline-block;
+        }
+
+        .brand-subtitle {
+            font-size: 0.75rem;
+            color: var(--muted);
+        }
+
+        .nav-links {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+
+        .nav-link {
+            padding: 9px 12px;
+            border-radius: 9px;
+            font-size: 0.9rem;
+            font-weight: 650;
+            color: #020617;
+        }
+
+        .nav-link:hover {
+            background: #f1f5f9;
+        }
+
+        .nav-link.active {
+            background: var(--primary);
+            color: #ffffff;
+        }
+
+        /* FULL PAGE LAYOUT */
+        .page {
+            width: 100%;
+            max-width: none;
+            margin: 0;
+            padding: 26px 32px 44px;
+        }
+
+        .top {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            gap: 16px;
+            flex-wrap: wrap;
+            margin-bottom: 18px;
+            padding-bottom: 18px;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .title {
+            margin: 0;
+            font-size: clamp(1.8rem, 2.5vw, 2.4rem);
+            font-weight: 800;
+            letter-spacing: -0.04em;
+            line-height: 1.1;
+        }
+
+        .muted {
+            color: var(--muted);
+        }
+
+        .top .muted {
+            margin-top: 6px;
+            font-size: 0.95rem;
+        }
+
+        .back-link {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 10px 14px;
+            border: 1px solid var(--border);
+            border-radius: 10px;
+            background: #ffffff;
+            font-size: 0.95rem;
+            transition: 0.15s ease;
+        }
+
+        .back-link:hover {
+            background: #eef2f7;
+            border-color: #cbd5e1;
+        }
+
+        .section {
+            width: 100%;
+            margin-top: 22px;
+            padding: 0;
+        }
+
+        .section-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 12px;
+            flex-wrap: wrap;
+            margin-bottom: 14px;
+        }
+
+        .section h2 {
+            margin: 0;
+            font-size: 1.25rem;
+            font-weight: 800;
+            letter-spacing: -0.02em;
+        }
+
+        .mode-bar {
+            display: inline-flex;
+            flex-wrap: wrap;
+            gap: 6px;
+            align-items: center;
+            margin: 8px 0 14px 0;
+            padding: 10px 12px;
+            background: var(--surface-soft);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            font-size: 0.95rem;
+        }
+
+        .mode-bar a {
+            color: var(--accent);
+            font-weight: 700;
+        }
+
+        .control-form {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px 12px;
+            align-items: center;
+            margin: 10px 0 16px 0;
+            padding: 14px;
+            background: #ffffff;
+            border: 1px solid var(--border);
+            border-radius: 14px;
+        }
+
+        .field-label {
+            color: var(--muted);
+            font-size: 0.94rem;
+            font-weight: 700;
+        }
+
+        select,
+        input[type="number"],
+        input[type="text"],
+        textarea,
+        button {
+            font: inherit;
+        }
+
+        select,
+        input[type="number"],
+        input[type="text"],
+        textarea {
+            border: 1px solid #cbd5e1;
+            border-radius: 10px;
+            background: #fff;
+            color: var(--text);
+            padding: 10px 12px;
+            transition: border-color 0.15s ease, box-shadow 0.15s ease;
+        }
+
+        select:focus,
+        input[type="number"]:focus,
+        input[type="text"]:focus,
+        textarea:focus {
+            outline: none;
+            border-color: #93c5fd;
+            box-shadow: 0 0 0 4px rgba(37, 99, 235, 0.10);
+        }
+
+        button {
+            border: 1px solid transparent;
+            border-radius: 10px;
+            padding: 10px 14px;
+            cursor: pointer;
+            transition: 0.15s ease;
+            font-weight: 700;
+        }
+
+        .btn-primary {
+            background: var(--primary);
+            color: #fff;
+        }
+
+        .btn-primary:hover {
+            background: var(--primary-hover);
+        }
+
+        .btn-secondary {
+            background: #fff;
+            border-color: var(--border);
+            color: var(--text);
+        }
+
+        .btn-secondary:hover {
+            background: #f8fafc;
+            border-color: #cbd5e1;
+        }
+
+        .meta-strip {
+            margin-top: 8px;
+            padding: 12px 14px;
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            background: #ffffff;
+            font-size: 0.95rem;
+        }
+
+        .chart-actions {
+            margin-top: 12px;
+            display: flex;
+            flex-wrap: wrap;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .chart-shell {
+            width: 100%;
+            margin-top: 14px;
+            padding: 16px;
+            border: 1px solid var(--border);
+            border-radius: 14px;
+            background: #ffffff;
+            overflow-x: auto;
+            box-shadow: var(--shadow);
+        }
+
+        #chart-container {
+            width: 100%;
+            min-height: 460px;
+        }
+
+        .row {
+            display: flex;
+            gap: 10px;
+            align-items: center;
+            flex-wrap: wrap;
+            margin-top: 10px;
+            padding: 14px;
+            background: #ffffff;
+            border: 1px solid var(--border);
+            border-radius: 14px;
+        }
+
+        .status {
+            margin-top: 12px;
+            min-height: 22px;
+            font-size: 0.95rem;
+        }
+
+        .status-success {
+            color: var(--success);
+        }
+
+        .status-error {
+            color: var(--danger);
+        }
+
+        .results-card {
+            margin-top: 12px;
+            display: none;
+            padding: 14px 16px;
+            border: 1px solid var(--border);
+            border-radius: 14px;
+            background: #ffffff;
+        }
+
+        .results-card h3 {
+            margin: 6px 0 8px 0;
+            font-size: 1rem;
+        }
+
+        ul {
+            margin: 8px 0 0 20px;
+            padding: 0;
+        }
+
+        li {
+            margin: 6px 0;
+            line-height: 1.45;
+        }
+
+        .empty-note {
+            margin-top: 8px;
+        }
+
+        .error-box {
+            margin-top: 8px;
+            padding: 12px 14px;
+            border-radius: 12px;
+            border: 1px solid #fecaca;
+            background: #fff5f5;
+            color: #7f1d1d;
+        }
+
+        .storyboard-actions {
+            align-items: stretch;
+        }
+
+        .storyboard-save-panel {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 12px;
+            align-items: end;
+            width: 100%;
+            padding: 14px;
+            border: 1px solid var(--border);
+            border-radius: 14px;
+            background: #ffffff;
+        }
+
+        .storyboard-field {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            min-width: 240px;
+            flex: 1 1 260px;
+        }
+
+        .storyboard-field input[type="text"],
+        .storyboard-field select {
+            width: 100%;
+        }
+
+        .storyboard-or {
+            align-self: center;
+            color: var(--muted);
+            font-size: 0.92rem;
+            font-weight: 700;
+            padding: 0 4px 8px;
+        }
+
+        .pill {
+            display: inline-block;
+            margin-left: 8px;
+            padding: 4px 8px;
+            border-radius: 999px;
+            background: var(--accent-soft);
+            color: #1d4ed8;
+            font-size: 0.8rem;
+            font-weight: 800;
+            vertical-align: middle;
+        }
+
+        .panel {
+            margin-top: 22px;
+            padding: 18px;
+            border: 1px solid #d9e2f1;
+            border-radius: 14px;
+            background: #ffffff;
+        }
+
+        .panel-header h3 {
+            margin: 0 0 6px 0;
+            font-size: 18px;
+        }
+
+        .panel-subtext {
+            margin: 0 0 14px 0;
+            color: #5f6b7a;
+            font-size: 14px;
+        }
+
+        .explanation-panel {
+            border-left: 4px solid #4f46e5;
+        }
+
+        .explanation-content p {
+            margin: 0 0 10px 0;
+            line-height: 1.6;
+            color: #1f2937;
+        }
+
+        @media (max-width: 900px) {
+            .navbar {
+                align-items: flex-start;
+                gap: 12px;
+                flex-direction: column;
+            }
+
+            .nav-links {
+                width: 100%;
+            }
+
+            .nav-link {
+                padding: 8px 10px;
+            }
+        }
+
+        @media (max-width: 720px) {
+            .page {
+                padding: 18px 14px 28px;
+            }
+
+            .control-form,
+            .row {
+                align-items: stretch;
+            }
+
+            .control-form select,
+            .control-form button,
+            .row select,
+            .row input,
+            .row button {
+                width: 100%;
+            }
+
+            .back-link {
+                width: 100%;
+                justify-content: center;
+            }
+
+            .storyboard-save-panel {
+                flex-direction: column;
+                align-items: stretch;
+            }
+
+            .storyboard-field {
+                min-width: 100%;
+            }
+
+            .storyboard-or {
+                align-self: flex-start;
+                padding: 0;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+<header class="navbar">
+    <a href="/" class="brand">
+        <div class="brand-title">
+            <span class="brand-dot"></span>
+            <span>CODAV</span>
+        </div>
+        <div class="brand-subtitle">Context-Aware Data Visualisation</div>
+    </a>
+
+    <nav class="nav-links">
+        <a class="nav-link" href="/">Home</a>
+        <a href="/datasets-page" class="nav-link">Dataset Browser</a>
+        <a class="nav-link active" href="/datasets/upload">Upload Dataset</a>
+        <a class="nav-link" href="/storyboards">Storyboards</a>
+        <a class="nav-link" href="/logout">Logout</a>
+        <a class="nav-link" href="/feedback">Feedback Forum</a>
+    </nav>
+</header>
+
+<div class="page">
+
+    <div class="top">
+        <div>
+            <h1 class="title">{{ dataset.name }}</h1>
+            <div class="muted">
+                {{ dataset.domain }}{% if dataset.source %} · {{ dataset.source }}{% endif %}
+            </div>
+        </div>
+
+        <div>
+            <a class="back-link" href="/datasets/{{ dataset.id }}/preview-page?limit=10">← Back to preview</a>
+        </div>
+    </div>
+
+    <section class="section">
+        <div class="section-header">
+            <h2>
+                Visualisation
+                <span class="pill">MVP</span>
+            </h2>
+        </div>
+
+        {% if mode == "expert" %}
+        <div class="mode-bar">
+            <span class="muted">Mode: <strong>expert</strong></span>
+            <span class="muted">·</span>
+            <a href="?mode=beginner">Switch to beginner</a>
+        </div>
+
+        <form method="get" class="control-form">
+            <input type="hidden" name="mode" value="expert" />
+
+            <label class="field-label" for="chart_type">Chart type</label>
+            <select name="chart_type" id="chart_type">
+                <option value="line" {% if chart_type == "line" %}selected{% endif %}>Line</option>
+                <option value="bar" {% if chart_type == "bar" %}selected{% endif %}>Bar</option>
+                <option value="scatter" {% if chart_type == "scatter" %}selected{% endif %}>Scatter</option>
+            </select>
+
+            {% if columns %}
+                <label class="field-label" for="x_col">X-axis</label>
+                <select name="x_col" id="x_col">
+                    {% for col in columns %}
+                        <option value="{{ col }}" {% if selected_x_col == col %}selected{% endif %}>{{ col }}</option>
+                    {% endfor %}
+                </select>
+
+                <label class="field-label" for="y_col">Y-axis</label>
+                <select name="y_col" id="y_col">
+                    {% for col in columns %}
+                        <option value="{{ col }}" {% if selected_y_col == col %}selected{% endif %}>{{ col }}</option>
+                    {% endfor %}
+                </select>
+            {% endif %}
+
+            <button class="btn-primary" type="submit">Update</button>
+        </form>
+
+        {% else %}
+        <div class="mode-bar">
+            <span class="muted">Mode: <strong>beginner</strong> recommended chart shown</span>
+            <span class="muted">·</span>
+            <a href="?mode=expert&chart_type={{ chart_type or 'line' }}">Switch to expert</a>
+        </div>
+        {% endif %}
+
+        {% if error %}
+        <div class="error-box">
+            <p style="margin:0;"><strong>Couldn’t build chart:</strong> {{ error }}</p>
+            <p class="empty-note muted" style="margin-bottom:0;">
+                This is expected for datasets without a clear date/year and numeric value combination.
+            </p>
+        </div>
+        {% else %}
+
+        <div class="meta-strip">
+            <span class="muted">Inferred columns:</span>
+            <strong>{{ spec.x_col }}</strong> x
+            <span class="muted">and</span>
+            <strong>{{ spec.y_col }}</strong> y
+        </div>
+
+        <div class="chart-actions storyboard-actions">
+            <div class="storyboard-save-panel">
+                <div class="storyboard-field">
+                    <label class="field-label" for="storyboard-id">Add to existing storyboard</label>
+                    <select id="storyboard-id">
+                        <option value="">-- Select a storyboard --</option>
+                        {% for sb in storyboards %}
+                            <option value="{{ sb.id }}">{{ sb.title }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+
+                <div class="storyboard-or">or</div>
+
+                <div class="storyboard-field">
+                    <label class="field-label" for="new-storyboard-title">Create new storyboard</label>
+                    <input
+                        id="new-storyboard-title"
+                        type="text"
+                        placeholder="Enter a new storyboard title"
+                    />
+                </div>
+            </div>
+
+            <div>
+                <button id="save-storyboard-btn" class="btn-primary" type="button">Save to storyboard</button>
+                <span id="save-storyboard-status" class="muted"></span>
+            </div>
+        </div>
+
+        <div class="chart-shell">
+            <div id="chart-container">
+                {{ chart_html | safe }}
+            </div>
+        </div>
+
+        {% endif %}
+    </section>
+
+    {% if chart_explanation %}
+    <section class="panel explanation-panel">
+        <div class="panel-header">
+            <h3>Chart explanation</h3>
+            <p class="panel-subtext">
+                A short plain-English summary of what the chart is showing.
+            </p>
+        </div>
+
+        <div class="explanation-content">
+            <p><strong>Overview:</strong> {{ chart_explanation.overview }}</p>
+            <p><strong>Pattern:</strong> {{ chart_explanation.pattern }}</p>
+            <p><strong>Interpretation:</strong> {{ chart_explanation.interpretation }}</p>
+            <p><strong>Caveat:</strong> {{ chart_explanation.caveat }}</p>
+        </div>
+    </section>
+    {% endif %}
+
+    <section class="section">
+        <div class="section-header">
+            <h2>Multi-dataset linking</h2>
+        </div>
+
+        <p class="muted" style="margin-top: 4px;">
+            Compare this dataset against another dataset and detect potential column links using rule-based heuristics.
+        </p>
+
+        <div class="row">
+            <label class="field-label" for="linking-dataset-b">Compare with</label>
+            <select id="linking-dataset-b">
+                {% for d in all_datasets %}
+                    {% if d.id != dataset.id %}
+                        <option value="{{ d.id }}">{{ d.id }} — {{ d.name }}</option>
+                    {% endif %}
+                {% endfor %}
+            </select>
+
+            <label class="field-label" for="linking-topk">Top</label>
+            <input id="linking-topk" type="number" min="1" max="20" value="5" style="width:84px;">
+
+            <button id="linking-run" class="btn-primary" type="button">Detect links</button>
+            <button id="insights-run" class="btn-secondary" type="button">Generate insights</button>
+        </div>
+
+        <div id="linking-status" class="muted status"></div>
+
+        <div id="linking-results" class="results-card">
+            <h3>Exact matches</h3>
+            <ul id="linking-exact"></ul>
+
+            <h3>Suggested matches</h3>
+            <ul id="linking-suggestions"></ul>
+        </div>
+
+        <div id="insights-status" class="muted status"></div>
+
+        <div id="insights-results" class="results-card">
+            <h3>Insights</h3>
+            <ul id="insights-list"></ul>
+        </div>
+    </section>
+
+</div>
+
+<script>
+(function () {
+    const datasetAId = {{ dataset.id }};
+
+    const runBtn = document.getElementById("linking-run");
+    const insightsBtn = document.getElementById("insights-run");
+
+    const datasetBSelect = document.getElementById("linking-dataset-b");
+    const topKInput = document.getElementById("linking-topk");
+
+    const statusEl = document.getElementById("linking-status");
+    const resultsEl = document.getElementById("linking-results");
+    const exactEl = document.getElementById("linking-exact");
+    const suggestionsEl = document.getElementById("linking-suggestions");
+
+    const insightsStatusEl = document.getElementById("insights-status");
+    const insightsResultsEl = document.getElementById("insights-results");
+    const insightsListEl = document.getElementById("insights-list");
+
+    const saveBtn = document.getElementById("save-storyboard-btn");
+    const saveStatus = document.getElementById("save-storyboard-status");
+    const storyboardSelect = document.getElementById("storyboard-id");
+    const newStoryboardTitleInput = document.getElementById("new-storyboard-title");
+
+    function setStatus(msg, isError = false) {
+        statusEl.textContent = msg;
+        statusEl.className = isError ? "status status-error" : "status status-success";
+    }
+
+    function setInsightsStatus(msg, isError = false) {
+        insightsStatusEl.textContent = msg;
+        insightsStatusEl.className = isError ? "status status-error" : "status status-success";
+    }
+
+    function clearLists() {
+        exactEl.innerHTML = "";
+        suggestionsEl.innerHTML = "";
+    }
+
+    function makeListItem(text) {
+        const el = document.createElement("li");
+        el.textContent = text;
+        return el;
+    }
+
+    async function runLinking() {
+        const datasetBId = parseInt(datasetBSelect.value, 10);
+        const topK = parseInt(topKInput.value, 10);
+
+        if (!datasetBId || datasetBId === datasetAId) {
+            setStatus("Please choose a different dataset to compare against.", true);
+            resultsEl.style.display = "none";
+            return;
+        }
+
+        setStatus("Running linking heuristics...");
+        resultsEl.style.display = "none";
+        clearLists();
+
+        const url = `/api/linking/suggestions?dataset_a_id=${datasetAId}&dataset_b_id=${datasetBId}&top_k=${topK}`;
+
+        try {
+            const resp = await fetch(url);
+            const data = await resp.json();
+
+            if (!resp.ok) {
+                setStatus(data && data.detail ? data.detail : "Linking request failed.", true);
+                return;
+            }
+
+            const shared = data.shared_exact || [];
+            const suggestions = data.suggestions || [];
+
+            if (shared.length === 0 && suggestions.length === 0) {
+                setStatus("No links detected for this pair of datasets.");
+                resultsEl.style.display = "none";
+                return;
+            }
+
+            shared.forEach(pair => {
+                exactEl.appendChild(makeListItem(`${pair.col_a} ↔ ${pair.col_b}`));
+            });
+
+            suggestions.forEach(s => {
+                const conf = (typeof s.confidence === "number") ? s.confidence.toFixed(3) : "n/a";
+                suggestionsEl.appendChild(makeListItem(`${s.col_a} ↔ ${s.col_b} (confidence: ${conf})`));
+            });
+
+            resultsEl.style.display = "block";
+            setStatus("Linking results generated.");
+        } catch (err) {
+            setStatus(`Linking request failed: ${err}`, true);
+        }
+    }
+
+    async function runInsights() {
+        const datasetBId = parseInt(datasetBSelect.value, 10);
+        const topK = parseInt(topKInput.value, 10);
+
+        if (!datasetBId || datasetBId === datasetAId) {
+            setInsightsStatus("Please choose a different dataset to compare against.", true);
+            insightsResultsEl.style.display = "none";
+            return;
+        }
+
+        setInsightsStatus("Generating rule-based insights...");
+        insightsResultsEl.style.display = "none";
+        insightsListEl.innerHTML = "";
+
+        const url = `/api/insights/generate?dataset_a_id=${datasetAId}&dataset_b_id=${datasetBId}&top_k=${topK}`;
+
+        try {
+            const resp = await fetch(url);
+            const data = await resp.json();
+
+            if (!resp.ok) {
+                setInsightsStatus(data && data.detail ? data.detail : "Insight generation failed.", true);
+                return;
+            }
+
+            const insights = data.insights || [];
+
+            if (insights.length === 0) {
+                setInsightsStatus("No insights generated.");
+                return;
+            }
+
+            insights.forEach(i => {
+                const li = document.createElement("li");
+                li.innerHTML = `<strong>${i.title}</strong><br>${i.summary}`;
+                insightsListEl.appendChild(li);
+            });
+
+            insightsResultsEl.style.display = "block";
+            setInsightsStatus("Insights generated successfully.");
+        } catch (err) {
+            setInsightsStatus(`Insight generation failed: ${err}`, true);
+        }
+    }
+
+    async function saveToStoryboard() {
+        saveStatus.textContent = "Saving slide...";
+
+        try {
+            const chartElement = document.querySelector(".js-plotly-plot");
+
+            if (!chartElement) {
+                saveStatus.textContent = "Chart not found.";
+                return;
+            }
+
+            const selectedStoryboardId = storyboardSelect ? storyboardSelect.value.trim() : "";
+            const newStoryboardTitle = newStoryboardTitleInput ? newStoryboardTitleInput.value.trim() : "";
+
+            if (!selectedStoryboardId && !newStoryboardTitle) {
+                saveStatus.textContent = "Choose an existing storyboard or enter a new title.";
+                return;
+            }
+
+            const chartHTML = "";
+
+            const liveFigure = {
+                data: chartElement.data || [],
+                layout: chartElement.layout || {}
+            };
+
+            const chartJSON = JSON.stringify(liveFigure);
+
+            const bodyData = new URLSearchParams({
+                visualisation_id: "{{ dataset.id }}",
+                caption: "",
+                chart_html: chartHTML,
+                chart_json: chartJSON
+            });
+
+            if (selectedStoryboardId) {
+                bodyData.append("storyboard_id", selectedStoryboardId);
+            }
+
+            if (newStoryboardTitle) {
+                bodyData.append("new_storyboard_title", newStoryboardTitle);
+            }
+
+            const response = await fetch("/storyboard/save", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/x-www-form-urlencoded"
+                },
+                body: bodyData
+            });
+
+            const data = await response.json();
+
+            if (response.ok && data.status === "saved") {
+                if (newStoryboardTitle) {
+                    saveStatus.textContent = "New storyboard created and slide saved.";
+
+                    if (storyboardSelect && data.storyboard_id) {
+                        const newOption = document.createElement("option");
+                        newOption.value = data.storyboard_id;
+                        newOption.textContent = newStoryboardTitle;
+                        newOption.selected = true;
+                        storyboardSelect.appendChild(newOption);
+                    }
+
+                    if (newStoryboardTitleInput) {
+                        newStoryboardTitleInput.value = "";
+                    }
+                } else {
+                    saveStatus.textContent = "Saved to existing storyboard.";
+                }
+            } else {
+                saveStatus.textContent = "Save failed.";
+            }
+        } catch (err) {
+            saveStatus.textContent = "Error saving slide.";
+            console.error("Storyboard save error:", err);
+        }
+    }
+
+    if (runBtn) runBtn.addEventListener("click", runLinking);
+    if (insightsBtn) insightsBtn.addEventListener("click", runInsights);
+    if (saveBtn) saveBtn.addEventListener("click", saveToStoryboard);
+})();
+</script>
+
+</body>
+</html>

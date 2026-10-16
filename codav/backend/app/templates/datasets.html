@@ -1,0 +1,251 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>CODAV – Datasets</title>
+  <style>
+    :root {
+      --bg: #f6f8fb;
+      --surface: #fff;
+      --surface-soft: #f8fafc;
+      --border: #e2e8f0;
+      --text: #0f172a;
+      --muted: #64748b;
+      --primary: #2563eb;
+      --primary-hover: #1d4ed8;
+      --accent: #2563eb;
+      --accent-hover: #1d4ed8;
+      --shadow: 0 10px 30px rgba(15, 23, 42, 0.06);
+      --radius: 16px;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: Inter, system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+      margin: 0;
+      background: linear-gradient(to bottom, #f8fafc 0%, #f6f8fb 100%);
+      color: var(--text);
+      letter-spacing: -0.01em;
+    }
+
+    a {
+      color: inherit;
+      text-decoration: none;
+    }
+
+    .page {
+      width: 100%;
+      padding: 24px 32px 36px;
+    }
+
+    .hero {
+      margin-top: 12px;
+      margin-bottom: 24px;
+      padding: 24px 28px;
+      border: 1px solid var(--border);
+      border-radius: 18px;
+      background: linear-gradient(to right, #ffffff, #f8fbff);
+      box-shadow: var(--shadow);
+    }
+
+    .hero h1 {
+      margin: 0;
+      font-size: clamp(2rem, 3vw, 2.6rem);
+      font-weight: 700;
+      letter-spacing: -0.04em;
+      line-height: 1.1;
+    }
+
+    .meta {
+      font-size: 1rem;
+      color: var(--muted);
+      margin-top: 10px;
+      line-height: 1.7;
+      max-width: 780px;
+    }
+
+    .datasets-grid {
+      list-style: none;
+      padding-left: 0;
+      margin: 0;
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+      gap: 18px;
+    }
+
+    .dataset-item {
+      padding: 20px;
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      background: var(--surface-soft);
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      min-height: 230px;
+      transition: 0.15s ease;
+      box-shadow: 0 4px 14px rgba(15, 23, 42, 0.03);
+    }
+
+    .dataset-item:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 10px 22px rgba(15, 23, 42, 0.08);
+    }
+
+    .dataset-title {
+      font-weight: 700;
+      margin: 0;
+      font-size: 1.08rem;
+      line-height: 1.4;
+      letter-spacing: -0.02em;
+    }
+
+    .dataset-desc {
+      margin: 0;
+      color: #334155;
+      font-size: 0.98rem;
+      line-height: 1.65;
+      flex-grow: 1;
+    }
+
+    .dataset-sub {
+      font-size: 0.92rem;
+      color: var(--muted);
+      margin: 0;
+      line-height: 1.55;
+      padding-top: 2px;
+    }
+
+    .dataset-sub strong {
+      color: var(--text);
+    }
+
+    .actions {
+      margin-top: 8px;
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      font-size: 0.96rem;
+      font-weight: 600;
+      padding: 11px 15px;
+      border-radius: 10px;
+      border: 1px solid var(--border);
+      background: #fff;
+      color: var(--text);
+      cursor: pointer;
+      transition: 0.15s ease;
+    }
+
+    .btn:hover {
+      background: #eef2f7;
+      border-color: #cbd5e1;
+    }
+
+    .btn-primary {
+      background: var(--accent);
+      border-color: var(--accent);
+      color: #fff;
+    }
+
+    .btn-primary:hover {
+      background: var(--accent-hover);
+      border-color: var(--accent-hover);
+    }
+
+    .footer-links {
+      margin-top: 24px;
+      font-size: 0.96rem;
+    }
+
+    .footer-links a {
+      color: var(--accent);
+      font-weight: 600;
+    }
+
+    .footer-links a:hover {
+      text-decoration: underline;
+    }
+
+    .empty-state {
+      margin-top: 18px;
+      padding: 20px;
+      border: 1px dashed #cbd5e1;
+      border-radius: 16px;
+      background: #f8fafc;
+      color: var(--muted);
+      font-size: 0.98rem;
+      line-height: 1.65;
+      box-shadow: var(--shadow);
+    }
+
+    @media (max-width: 720px) {
+      .page {
+        padding: 16px 12px 28px;
+      }
+
+      .hero {
+        padding: 18px;
+      }
+
+      .datasets-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .btn {
+        width: 100%;
+      }
+    }
+  </style>
+</head>
+<body>
+  {% include "navbar.html" %}
+
+  <div class="page">
+    <div class="hero">
+      <h1>Available Datasets</h1>
+      <p class="meta">
+        Read-only dataset overview. Select a dataset to preview its structure before visualising.
+      </p>
+    </div>
+
+    {% if datasets %}
+    <ul class="datasets-grid">
+      {% for d in datasets %}
+      <li class="dataset-item">
+        <p class="dataset-title">{{ d.id }}. {{ d.name }}</p>
+        <p class="dataset-desc">{{ d.description }}</p>
+        <p class="dataset-sub">
+          <strong>Domain:</strong> {{ d.domain }}
+          &nbsp;|&nbsp;
+          <strong>Source:</strong> {{ d.source }}
+        </p>
+        <div class="actions">
+          <a class="btn btn-primary" href="/datasets/{{ d.id }}/preview-page?limit=10">
+            Preview rows →
+          </a>
+        </div>
+      </li>
+      {% endfor %}
+    </ul>
+    {% else %}
+    <div class="empty-state">
+      No datasets are available right now.
+    </div>
+    {% endif %}
+
+    <div class="footer-links">
+      <a href="/">← Back to homepage</a>
+    </div>
+  </div>
+</body>
+</html>

@@ -1,0 +1,480 @@
+<!DOCTYPE html>
+<html lang="en">
+{% if embed %}
+<style>
+  body {
+    margin: 0;
+    background: #ffffff;
+  }
+  .page {
+    max-width: none;
+    margin: 0;
+    padding: 0;
+  }
+  .container {
+    max-width: none;
+    margin: 0;
+    padding: 0;
+    border: 0;
+    border-radius: 0;
+    box-shadow: none;
+    background: #ffffff;
+  }
+  .navbar-shell,
+  .hero,
+  .footer-links,
+  .page-header-actions {
+    display: none;
+  }
+  .preview-card {
+    border: 0;
+    border-radius: 0;
+    box-shadow: none;
+    padding: 0;
+    background: #ffffff;
+  }
+</style>
+{% endif %}
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>CODAV – Dataset Preview</title>
+  <style>
+    :root {
+      --bg: #f6f8fb;
+      --surface: #ffffff;
+      --surface-soft: #f8fafc;
+      --border: #e2e8f0;
+      --text: #0f172a;
+      --muted: #64748b;
+      --primary: #2563eb;
+      --primary-hover: #1d4ed8;
+      --accent: #2563eb;
+      --accent-hover: #1d4ed8;
+      --shadow: 0 10px 30px rgba(15, 23, 42, 0.06);
+      --radius: 16px;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: Inter, system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+      margin: 0;
+      min-height: 100vh;
+      background: linear-gradient(to bottom, #f8fafc 0%, #f6f8fb 100%);
+      color: var(--text);
+    }
+
+    a {
+      color: inherit;
+      text-decoration: none;
+    }
+
+    /* Bug fix: preview page now uses the full page width like the datasets page */
+    .page {
+      width: 100%;
+      min-height: 100vh;
+      margin: 0;
+      padding: 24px 28px 36px;
+    }
+
+    /* Bug fix: removed the outer floating card so only the actual content sections look like cards */
+    .container {
+      width: 100%;
+      background: transparent;
+      border: none;
+      border-radius: 0;
+      box-shadow: none;
+      padding: 0;
+    }
+
+    .navbar-shell {
+      margin-bottom: 24px;
+    }
+
+    .hero {
+      margin-top: 0;
+      margin-bottom: 20px;
+      padding: 22px 24px;
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      background: linear-gradient(to right, #ffffff, #f8fbff);
+    }
+
+    .hero-top {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      gap: 16px;
+      flex-wrap: wrap;
+    }
+
+    .hero h1 {
+      margin: 0;
+      font-size: clamp(1.7rem, 2.4vw, 2.25rem);
+      font-weight: 700;
+      letter-spacing: -0.03em;
+    }
+
+    .hero-subtitle {
+      font-size: 0.95rem;
+      color: var(--muted);
+      margin-top: 8px;
+      line-height: 1.5;
+      max-width: 900px;
+    }
+
+    .badge {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      padding: 8px 12px;
+      border-radius: 999px;
+      background: #dbeafe;
+      color: #1d4ed8;
+      font-size: 0.88rem;
+      font-weight: 600;
+      white-space: nowrap;
+      border: 1px solid #bfdbfe;
+    }
+
+    .preview-card {
+      padding: 22px;
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      background: var(--surface-soft);
+    }
+
+    .section-title {
+      margin: 0 0 14px 0;
+      font-size: 1.08rem;
+      font-weight: 700;
+      letter-spacing: -0.01em;
+    }
+
+    .dataset-name {
+      margin: 0;
+      font-size: 1.2rem;
+      font-weight: 700;
+      line-height: 1.35;
+      letter-spacing: -0.02em;
+    }
+
+    .dataset-description {
+      margin: 12px 0 0 0;
+      color: #334155;
+      font-size: 0.95rem;
+      line-height: 1.6;
+      max-width: 1000px;
+    }
+
+    .meta-grid {
+      margin-top: 16px;
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: 12px;
+    }
+
+    .meta-card {
+      background: #ffffff;
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 12px 14px;
+    }
+
+    .meta-label {
+      display: block;
+      font-size: 0.78rem;
+      font-weight: 700;
+      color: var(--muted);
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+      margin-bottom: 6px;
+    }
+
+    .meta-value {
+      font-size: 0.95rem;
+      color: var(--text);
+      line-height: 1.4;
+      word-break: break-word;
+    }
+
+    .table-section {
+      margin-top: 20px;
+      padding: 18px;
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      background: #ffffff;
+    }
+
+    .table-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 12px;
+      flex-wrap: wrap;
+      margin-bottom: 12px;
+    }
+
+    .table-title {
+      margin: 0;
+      font-size: 1rem;
+      font-weight: 700;
+      letter-spacing: -0.01em;
+    }
+
+    .table-subtitle {
+      margin: 4px 0 0 0;
+      font-size: 0.9rem;
+      color: var(--muted);
+      line-height: 1.5;
+    }
+
+    .rows-badge {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      padding: 7px 10px;
+      border-radius: 999px;
+      background: #eff6ff;
+      color: #1d4ed8;
+      font-size: 0.84rem;
+      font-weight: 600;
+      border: 1px solid #dbeafe;
+      white-space: nowrap;
+    }
+
+    .table-wrapper {
+      width: 100%;
+      overflow-x: auto;
+      -webkit-overflow-scrolling: touch;
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      background: #ffffff;
+    }
+
+    table {
+      width: max-content;
+      min-width: 100%;
+      border-collapse: collapse;
+      font-size: 0.92rem;
+    }
+
+    th,
+    td {
+      border-bottom: 1px solid #e2e8f0;
+      padding: 10px 12px;
+      text-align: left;
+      vertical-align: top;
+      white-space: nowrap;
+    }
+
+    th {
+      background: #f8fafc;
+      color: var(--text);
+      font-weight: 700;
+      position: sticky;
+      top: 0;
+      z-index: 1;
+    }
+
+    tbody tr:hover {
+      background: #f8fbff;
+    }
+
+    .page-header-actions,
+    .footer-links {
+      margin-top: 20px;
+    }
+
+    .actions {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      font-size: 0.92rem;
+      font-weight: 600;
+      padding: 10px 14px;
+      border-radius: 10px;
+      border: 1px solid var(--border);
+      background: #ffffff;
+      color: var(--text);
+      cursor: pointer;
+      transition: 0.15s ease;
+    }
+
+    .btn:hover {
+      background: #eef2f7;
+      border-color: #cbd5e1;
+    }
+
+    .btn-primary {
+      background: var(--accent);
+      border-color: var(--accent);
+      color: #ffffff;
+    }
+
+    .btn-primary:hover {
+      background: var(--accent-hover);
+      border-color: var(--accent-hover);
+    }
+
+    .helper-text {
+      margin-top: 10px;
+      font-size: 0.9rem;
+      color: var(--muted);
+      line-height: 1.5;
+    }
+
+    .footer-links {
+      font-size: 0.92rem;
+      display: flex;
+      gap: 16px;
+      flex-wrap: wrap;
+    }
+
+    .footer-links a {
+      color: var(--accent);
+      font-weight: 600;
+    }
+
+    .footer-links a:hover {
+      text-decoration: underline;
+    }
+
+    @media (max-width: 720px) {
+      .page {
+        padding: 16px 12px 28px;
+      }
+
+      .hero,
+      .preview-card,
+      .table-section {
+        padding: 16px;
+      }
+
+      .actions {
+        flex-direction: column;
+      }
+
+      .btn {
+        width: 100%;
+      }
+
+      th,
+      td {
+        font-size: 0.88rem;
+      }
+    }
+  </style>
+</head>
+
+<body>
+  <div class="page">
+    <div class="container">
+
+      {% if not embed %}
+      <div class="navbar-shell">
+        {% include "navbar.html" %}
+      </div>
+      {% endif %}
+
+      <div class="hero">
+        <div class="hero-top">
+          <div>
+            <h1>Dataset Preview</h1>
+            <p class="hero-subtitle">
+              Review the dataset structure and sample rows before moving to visualisation.
+            </p>
+          </div>
+          <span class="badge">Beginner-friendly</span>
+        </div>
+      </div>
+
+      <div class="preview-card">
+        <h2 class="section-title">Dataset details</h2>
+        <p class="dataset-name">{{ dataset.name }}</p>
+
+        <p class="dataset-description">
+          {{ dataset.description }}
+        </p>
+
+        <div class="meta-grid">
+          <div class="meta-card">
+            <span class="meta-label">Domain</span>
+            <div class="meta-value">{{ dataset.domain }}</div>
+          </div>
+
+          <div class="meta-card">
+            <span class="meta-label">Source</span>
+            <div class="meta-value">{{ dataset.source }}</div>
+          </div>
+
+          <div class="meta-card">
+            <span class="meta-label">Dataset ID</span>
+            <div class="meta-value">{{ dataset.id }}</div>
+          </div>
+        </div>
+
+        <div class="page-header-actions">
+          <div class="actions">
+            <a href="/datasets/{{ dataset.id }}/visualise-page" class="btn btn-primary">
+              Create visualisation →
+            </a>
+          </div>
+          <div class="helper-text">
+            Start building a chart using this dataset.
+          </div>
+        </div>
+
+        <div class="table-section">
+          <div class="table-header">
+            <div>
+              <h3 class="table-title">Preview rows</h3>
+              <p class="table-subtitle">
+                Sample data from the first rows of the dataset for quick inspection.
+              </p>
+            </div>
+            <span class="rows-badge">First {{ limit }} rows</span>
+          </div>
+
+          <div class="table-wrapper">
+            <table>
+              <thead>
+                <tr>
+                  {% for col in columns %}
+                  <th>{{ col }}</th>
+                  {% endfor %}
+                </tr>
+              </thead>
+              <tbody>
+                {% for row in rows %}
+                <tr>
+                  {% for col in columns %}
+                  <td>{{ row.get(col, "") }}</td>
+                  {% endfor %}
+                </tr>
+                {% endfor %}
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+      <div class="footer-links">
+        <a href="/datasets-page">← Back to datasets</a>
+        <a href="/">Home</a>
+      </div>
+
+    </div>
+  </div>
+</body>
+</html>

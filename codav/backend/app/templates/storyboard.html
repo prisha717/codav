@@ -1,0 +1,311 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <title>{{ storyboard.title }} — Storyboard</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <script src="https://cdn.plot.ly/plotly-2.30.0.min.js"></script>
+
+    <style>
+        :root {
+            --bg: #f6f8fb;
+            --surface: #ffffff;
+            --surface-soft: #f8fafc;
+            --border: #e2e8f0;
+            --text: #0f172a;
+            --muted: #64748b;
+            --primary: #2563eb;
+            --primary-hover: #1d4ed8;
+            --accent: #2563eb;
+            --accent-hover: #1d4ed8;
+            --danger: #b91c1c;
+            --danger-hover: #991b1b;
+            --shadow: 0 10px 30px rgba(15, 23, 42, 0.06);
+            --radius: 16px;
+        }
+
+        * { box-sizing: border-box; }
+
+        body {
+            font-family: Inter, system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+            margin: 0;
+            background: linear-gradient(to bottom, #f8fafc 0%, #f6f8fb 100%);
+            color: var(--text);
+            letter-spacing: -0.01em;
+        }
+
+        a { text-decoration: none; color: inherit; }
+
+        button, textarea { font: inherit; }
+
+        .page {
+            width: 100%;
+            padding: 24px 32px 36px;
+        }
+
+        /* TOPBAR */
+        .topbar {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: 18px;
+            padding: 22px 26px;
+            margin-bottom: 22px;
+            box-shadow: var(--shadow);
+            display: flex;
+            justify-content: space-between;
+            flex-wrap: wrap;
+            gap: 14px;
+        }
+
+        .topbar h1 {
+            margin: 0;
+            font-size: clamp(2rem, 3vw, 2.5rem);
+            font-weight: 700;
+        }
+
+        .topbar .muted {
+            font-size: 1.05rem;
+            margin-top: 6px;
+        }
+
+        .topbar-actions {
+            display: flex;
+            gap: 12px;
+            flex-wrap: wrap;
+        }
+
+        /* LAYOUT */
+        .layout {
+            display: grid;
+            grid-template-columns: 260px 1fr 230px;
+            gap: 24px;
+        }
+
+        .panel {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: 18px;
+            padding: 20px;
+            box-shadow: var(--shadow);
+        }
+
+        .panel h2 {
+            font-size: 1.2rem;
+            margin-bottom: 12px;
+        }
+
+        /* SAVED LIST */
+        .saved-item {
+            padding: 14px;
+            font-size: 1rem;
+        }
+
+        /* SLIDES */
+        .slide-grid {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        .slide-card {
+            padding: 18px;
+        }
+
+        .slide-header h3 {
+            font-size: 1.2rem;
+        }
+
+        .slide-badge {
+            font-size: 0.85rem;
+            padding: 6px 10px;
+        }
+
+        .plotly-chart {
+            min-height: 360px;
+        }
+
+        /* NOTES */
+        .slide-notes strong {
+            font-size: 1rem;
+        }
+
+        textarea {
+            font-size: 0.98rem;
+        }
+
+        /* BUTTONS */
+        .btn,
+        .primary-btn,
+        .action-btn,
+        .share-btn {
+            font-size: 0.98rem;
+            padding: 12px 16px;
+        }
+
+        .primary-btn {
+            background: var(--primary);
+            color: white;
+        }
+
+        .primary-btn:hover {
+            background: var(--primary-hover);
+        }
+
+        .danger-btn {
+            background: #fff5f5;
+            border-color: #fecaca;
+        }
+
+        .small-row button {
+            font-size: 0.95rem;
+        }
+
+        /* FOOTER NAV */
+        .bottom-nav {
+            margin-top: 22px;
+            padding: 14px 18px;
+        }
+
+        .bottom-nav a {
+            font-size: 0.95rem;
+        }
+
+        .muted { color: var(--muted); }
+
+        @media (max-width: 1100px) {
+            .layout {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        @media (max-width: 720px) {
+            .page {
+                padding: 16px 12px 28px;
+            }
+
+            .topbar h1 {
+                font-size: 1.8rem;
+            }
+
+            .btn,
+            .action-btn {
+                width: 100%;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+<div class="page">
+
+    <div class="topbar">
+        <div>
+            <h1>{{ storyboard.title }}</h1>
+            <div class="muted">Storyboard Builder — CODAV</div>
+        </div>
+
+        <div class="topbar-actions">
+            <a href="/storyboards/{{ storyboard.id }}/view" target="_blank" class="share-btn">
+                Share Storyboard
+            </a>
+
+            <form method="post"
+                  action="/storyboards/{{ storyboard.id }}/delete"
+                  onsubmit="return confirm('Delete this storyboard?');">
+
+                <button type="submit" class="btn btn-danger">
+                    Delete storyboard
+                </button>
+            </form>
+        </div>
+    </div>
+
+    <div class="layout">
+
+        <!-- LEFT -->
+        <aside class="panel">
+            <h2>Saved visualisations</h2>
+
+            {% for s in slides %}
+                <div class="saved-item">
+                    <strong>
+                        {% if s.visualisation_id %}
+                            Visualisation {{ s.visualisation_id }}
+                        {% else %}
+                            Empty slide
+                        {% endif %}
+                    </strong>
+                    <div class="muted">Slide {{ s.order_index + 1 }}</div>
+                </div>
+            {% endfor %}
+        </aside>
+
+        <!-- MAIN -->
+        <main class="panel">
+            <h2>Storyboard workspace</h2>
+
+            {% if slides %}
+                <div class="slide-grid">
+
+                    {% for s in slides %}
+                    <div class="slide-card">
+
+                        <div class="slide-header">
+                            <h3>Slide {{ s.order_index + 1 }}</h3>
+                            <span class="slide-badge">
+                                {% if s.visualisation_id %}Chart{% else %}Blank{% endif %}
+                            </span>
+                        </div>
+
+                        <div class="slide-chart">
+                            {% if s.chart_json %}
+                                <div id="chart-{{ s.id }}" class="plotly-chart"></div>
+                                <script>
+                                    const fig{{ s.id }} = JSON.parse(`{{ s.chart_json | safe }}`);
+                                    Plotly.newPlot("chart-{{ s.id }}", fig{{ s.id }}.data, fig{{ s.id }}.layout);
+                                </script>
+                            {% else %}
+                                <div class="empty-slide">Blank slide</div>
+                            {% endif %}
+                        </div>
+
+                        <div class="slide-notes">
+                            <form method="post" action="/slides/{{ s.id }}/notes">
+                                <strong>Notes</strong>
+                                <textarea name="user_notes">{{ s.user_notes or "" }}</textarea>
+                                <button class="primary-btn">Save notes</button>
+                            </form>
+                        </div>
+
+                        <form method="post" action="/slides/{{ s.id }}/move" class="small-row">
+                            <button name="direction" value="up">Move Up</button>
+                            <button name="direction" value="down">Move Down</button>
+                        </form>
+
+                    </div>
+                    {% endfor %}
+
+                </div>
+            {% endif %}
+        </main>
+
+        <!-- RIGHT -->
+        <aside class="panel">
+            <h2>Actions</h2>
+
+            <form method="post" action="/storyboards/{{ storyboard.id }}/slides/add">
+                <button class="action-btn">Add slide</button>
+            </form>
+
+            <a href="/storyboards/{{ storyboard.id }}/export-pdf" class="action-btn">
+                Export PDF
+            </a>
+        </aside>
+
+    </div>
+
+</div>
+
+</body>
+</html>

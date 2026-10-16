@@ -1,0 +1,377 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <title>Storyboards — CODAV</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <style>
+    :root {
+      --bg: #f6f8fb;
+      --surface: #ffffff;
+      --surface-soft: #f8fafc;
+      --border: #e2e8f0;
+      --text: #0f172a;
+      --muted: #64748b;
+      --primary: #2563eb;
+      --primary-hover: #1d4ed8;
+      --accent: #2563eb;
+      --accent-hover: #1d4ed8;
+      --danger: #b91c1c;
+      --danger-hover: #991b1b;
+      --shadow: 0 10px 30px rgba(15, 23, 42, 0.06);
+      --radius: 16px;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: Inter, system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+      margin: 0;
+      background: linear-gradient(to bottom, #f8fafc 0%, #f6f8fb 100%);
+      color: var(--text);
+      letter-spacing: -0.01em;
+    }
+
+    a {
+      color: inherit;
+      text-decoration: none;
+    }
+
+    .page {
+      width: 100%;
+      padding: 24px 32px 36px;
+    }
+
+    .hero {
+      margin-bottom: 28px;
+      padding: 24px 28px;
+      border: 1px solid var(--border);
+      border-radius: 18px;
+      background: var(--surface);
+      box-shadow: var(--shadow);
+    }
+
+    .hero h1 {
+      margin: 0;
+      font-size: clamp(2rem, 3vw, 2.6rem);
+      font-weight: 700;
+      letter-spacing: -0.04em;
+      line-height: 1.1;
+    }
+
+    .hero-subtitle {
+      margin-top: 10px;
+      font-size: 1.08rem;
+      color: var(--muted);
+      line-height: 1.7;
+      max-width: 760px;
+    }
+
+    .layout {
+      display: grid;
+      grid-template-columns: 340px 1fr;
+      gap: 24px;
+      align-items: start;
+    }
+
+    .panel {
+      border: 1px solid var(--border);
+      border-radius: 18px;
+      background: var(--surface);
+      padding: 22px;
+      box-shadow: var(--shadow);
+    }
+
+    .panel h2 {
+      margin: 0 0 10px 0;
+      font-size: 1.2rem;
+      font-weight: 700;
+      letter-spacing: -0.02em;
+    }
+
+    .panel p {
+      margin: 0;
+      color: #334155;
+      font-size: 1rem;
+      line-height: 1.7;
+    }
+
+    .field-group {
+      margin-top: 18px;
+    }
+
+    label {
+      display: inline-block;
+      margin-bottom: 8px;
+      font-size: 0.98rem;
+      font-weight: 600;
+      color: var(--text);
+    }
+
+    input[type="text"] {
+      width: 100%;
+      padding: 12px 13px;
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      background: #ffffff;
+      color: var(--text);
+      font-size: 0.98rem;
+    }
+
+    .helper-text {
+      margin-top: 8px;
+      font-size: 0.92rem;
+      color: var(--muted);
+      line-height: 1.6;
+    }
+
+    .actions {
+      margin-top: 18px;
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      font-size: 0.98rem;
+      font-weight: 600;
+      padding: 11px 15px;
+      border-radius: 10px;
+      border: 1px solid var(--border);
+      background: #fff;
+      color: var(--text);
+      cursor: pointer;
+      transition: 0.15s ease;
+    }
+
+    .btn:hover {
+      background: #eef2f7;
+      border-color: #cbd5e1;
+    }
+
+    .btn-primary {
+      background: var(--primary);
+      border-color: var(--primary);
+      color: #fff;
+    }
+
+    .btn-primary:hover {
+      background: var(--primary-hover);
+      border-color: var(--primary-hover);
+    }
+
+    .btn-danger {
+      border-color: #fecaca;
+      color: var(--danger);
+      background: #ffffff;
+    }
+
+    .btn-danger:hover {
+      background: #fef2f2;
+      border-color: #fca5a5;
+    }
+
+    .storyboards-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+      gap: 20px;
+    }
+
+    .storyboard-card {
+      padding: 20px;
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      background: var(--surface-soft);
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      min-height: 220px;
+      transition: 0.15s ease;
+    }
+
+    .storyboard-card:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 8px 20px rgba(15, 23, 42, 0.08);
+    }
+
+    .storyboard-title {
+      margin: 0;
+      font-size: 1.08rem;
+      font-weight: 700;
+      line-height: 1.4;
+      letter-spacing: -0.01em;
+    }
+
+    .storyboard-meta {
+      margin: 0;
+      font-size: 0.96rem;
+      color: var(--muted);
+      line-height: 1.6;
+    }
+
+    .storyboard-desc {
+      margin: 0;
+      color: #334155;
+      font-size: 0.98rem;
+      line-height: 1.65;
+      flex-grow: 1;
+    }
+
+    .empty-state {
+      padding: 20px;
+      border: 1px dashed #cbd5e1;
+      border-radius: 16px;
+      background: #f8fafc;
+      color: var(--muted);
+      font-size: 1rem;
+      line-height: 1.7;
+    }
+
+    .footer-links {
+      margin-top: 24px;
+      font-size: 0.98rem;
+      display: flex;
+      gap: 16px;
+      flex-wrap: wrap;
+    }
+
+    .footer-links a {
+      color: var(--primary);
+      font-weight: 600;
+    }
+
+    .footer-links a:hover {
+      text-decoration: underline;
+    }
+
+    @media (max-width: 900px) {
+      .layout {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    @media (max-width: 720px) {
+      .page {
+        padding: 16px 12px 28px;
+      }
+
+      .hero,
+      .panel,
+      .storyboard-card {
+        padding: 18px;
+      }
+
+      .actions {
+        flex-direction: column;
+      }
+
+      .btn {
+        width: 100%;
+      }
+
+      .storyboards-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+  </style>
+</head>
+
+<body>
+  {% include "navbar.html" %}
+
+  <div class="page">
+    <div class="hero">
+      <h1>Storyboards</h1>
+      <p class="hero-subtitle">
+        Create and manage multiple storyboards for different visualisation collections.
+      </p>
+    </div>
+
+    <div class="layout">
+      <div class="panel">
+        <h2>Create storyboard</h2>
+        <p>
+          Start a new storyboard with a title so you can save charts into separate collections.
+        </p>
+
+        <form method="post" action="/storyboards/create">
+          <div class="field-group">
+            <label for="title">Storyboard title</label>
+            <input
+              type="text"
+              id="title"
+              name="title"
+              placeholder="e.g. Inflation analysis"
+              required
+            />
+            <div class="helper-text">
+              Keep it short and clear so it is easy to identify later.
+            </div>
+          </div>
+
+          <div class="actions">
+            <button type="submit" class="btn btn-primary">Create storyboard</button>
+          </div>
+        </form>
+      </div>
+
+      <div>
+        {% if storyboards %}
+          <div class="storyboards-grid">
+            {% for storyboard in storyboards %}
+              <div class="storyboard-card">
+                <p class="storyboard-title">{{ storyboard.title }}</p>
+
+                <p class="storyboard-meta">
+                  ID: {{ storyboard.id }}
+                  {% if storyboard.created_at %}
+                    | {{ storyboard.created_at }}
+                  {% endif %}
+                </p>
+
+                <p class="storyboard-desc">
+                  Open this storyboard to view slides, add blank slides, reorder content, edit notes, or export it as a PDF.
+                </p>
+
+                <div class="actions">
+                  <a class="btn btn-primary" href="/storyboards/{{ storyboard.id }}">
+                    Open storyboard →
+                  </a>
+
+                  <a class="btn" href="/storyboards/{{ storyboard.id }}/view">
+                    Public view
+                  </a>
+
+                  <form
+                    method="post"
+                    action="/storyboards/{{ storyboard.id }}/delete"
+                    onsubmit="return confirm('Delete this storyboard and all of its slides?');"
+                    style="margin:0;"
+                  >
+                    <button type="submit" class="btn btn-danger">Delete</button>
+                  </form>
+                </div>
+              </div>
+            {% endfor %}
+          </div>
+        {% else %}
+          <div class="empty-state">
+            No storyboards have been created yet.
+          </div>
+        {% endif %}
+      </div>
+    </div>
+
+    <div class="footer-links">
+      <a href="/">← Back to homepage</a>
+    </div>
+  </div>
+</body>
+</html>

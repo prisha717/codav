@@ -1,0 +1,119 @@
+<!-- navbar.html -->
+<style>
+  .navbar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 18px 24px; /* bigger */
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    background: var(--surface);
+    box-shadow: var(--shadow);
+  }
+
+  .navbar-left {
+    display: flex;
+    flex-direction: column;
+  }
+
+  /* 🔥 Logo-style branding */
+  .navbar-brand {
+    font-weight: 800;
+    font-size: 1.4rem; /* bigger */
+    letter-spacing: -0.04em;
+    color: var(--text);
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  /* optional "logo dot" */
+  .navbar-brand::before {
+    content: "";
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    background: var(--accent);
+    display: inline-block;
+  }
+
+  .navbar-sub {
+    font-size: 0.85rem; /* slightly bigger */
+    color: var(--muted);
+    margin-top: 3px;
+  }
+
+  .navbar-links {
+    display: flex;
+    align-items: center;
+    gap: 14px; /* more breathing room */
+    flex-wrap: wrap;
+  }
+
+  .nav-link {
+    font-size: 0.98rem; /* slightly bigger */
+    font-weight: 600;
+    padding: 10px 14px; /* bigger buttons */
+    border-radius: 10px;
+    color: var(--text);
+    border: 1px solid transparent;
+    transition: 0.15s ease;
+  }
+
+  .nav-link:hover {
+    background: #eef2f7;
+    border-color: var(--border);
+  }
+
+  .nav-link-primary {
+    background: var(--accent);
+    color: #fff;
+    border-color: var(--accent);
+  }
+
+  .nav-link-primary:hover {
+    background: var(--accent-hover);
+    border-color: var(--accent-hover);
+  }
+
+  @media (max-width: 720px) {
+    .navbar {
+      flex-direction: column;
+      align-items: flex-start;
+      gap: 14px;
+    }
+
+    .navbar-links {
+      width: 100%;
+    }
+
+    .nav-link {
+      width: 100%;
+      text-align: center;
+    }
+  }
+</style>
+
+<div class="navbar">
+
+  <!-- Branding -->
+  <div class="navbar-left">
+    <a href="/" class="navbar-brand">
+      CODAV
+    </a>
+    <span class="navbar-sub">
+      Context-Aware Data Visualisation
+    </span>
+  </div>
+
+  <!-- Navigation -->
+  <div class="navbar-links">
+    <a href="/" class="nav-link">Home</a>
+    <a href="/datasets-page" class="nav-link">Dataset Browser</a>
+    <a href="/datasets/upload" class="nav-link nav-link-primary">Upload Dataset</a>
+    <a href="/storyboards" class="nav-link">Storyboards</a>
+    <a class="nav-link" href="/logout">Logout</a>
+    <a href="/feedback" class="nav-link">Feedback Forum</a> 
+  </div>
+
+</div>

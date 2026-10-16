@@ -1,0 +1,367 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <title>Upload Dataset — CODAV</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <style>
+    :root {
+      --bg: #f6f8fb;
+      --surface: #ffffff;
+      --surface-soft: #f8fafc;
+      --border: #e2e8f0;
+      --text: #0f172a;
+      --muted: #64748b;
+      --primary: #2563eb;
+      --primary-hover: #1d4ed8;
+      --accent: #2563eb;
+      --accent-hover: #1d4ed8;
+      --shadow: 0 10px 30px rgba(15, 23, 42, 0.06);
+      --radius: 16px;
+      --danger-bg: #fef2f2;
+      --danger-border: #fecaca;
+      --danger-text: #b91c1c;
+      --success-bg: #f0fdf4;
+      --success-border: #bbf7d0;
+      --success-text: #166534;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: Inter, system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+      margin: 0;
+      min-height: 100vh;
+      background: linear-gradient(to bottom, #f8fafc 0%, #f6f8fb 100%);
+      color: var(--text);
+    }
+
+    a {
+      color: inherit;
+      text-decoration: none;
+    }
+
+    /* Bug fix: use full page width instead of a narrow centred wrapper */
+    .page {
+      width: 100%;
+      min-height: 100vh;
+      margin: 0;
+      padding: 24px 28px 36px;
+    }
+
+    /* Bug fix: remove the outer card effect while keeping inner panels */
+    .container {
+      width: 100%;
+      background: transparent;
+      border: none;
+      border-radius: 0;
+      box-shadow: none;
+      padding: 0;
+    }
+
+    .hero {
+      margin-top: 24px;
+      margin-bottom: 20px;
+      padding: 22px 24px;
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      background: linear-gradient(to right, #ffffff, #f8fbff);
+    }
+
+    .hero h1 {
+      margin: 0;
+      font-size: clamp(1.7rem, 2.4vw, 2.25rem);
+      font-weight: 700;
+      letter-spacing: -0.03em;
+    }
+
+    .hero-subtitle {
+      font-size: 0.95rem;
+      color: var(--muted);
+      margin-top: 8px;
+      line-height: 1.5;
+      max-width: 900px;
+    }
+
+    .content-grid {
+      display: grid;
+      grid-template-columns: minmax(280px, 1fr) minmax(420px, 1.15fr);
+      gap: 16px;
+      align-items: start;
+    }
+
+    .panel {
+      padding: 18px;
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      background: var(--surface-soft);
+    }
+
+    .panel h2 {
+      margin: 0 0 10px 0;
+      font-size: 1.05rem;
+      font-weight: 700;
+      letter-spacing: -0.01em;
+    }
+
+    .panel p {
+      margin: 0;
+      color: #334155;
+      font-size: 0.94rem;
+      line-height: 1.6;
+    }
+
+    .panel p + p {
+      margin-top: 12px;
+    }
+
+    .panel a {
+      color: var(--accent);
+      font-weight: 600;
+    }
+
+    .panel a:hover {
+      text-decoration: underline;
+    }
+
+    .form-panel {
+      background: #ffffff;
+    }
+
+    .field-group {
+      margin-top: 16px;
+    }
+
+    label {
+      display: inline-block;
+      font-size: 0.92rem;
+      font-weight: 600;
+      color: var(--text);
+      margin-bottom: 8px;
+    }
+
+    .field-help {
+      margin-top: 6px;
+      font-size: 0.88rem;
+      color: var(--muted);
+      line-height: 1.5;
+    }
+
+    input[type="file"] {
+      width: 100%;
+      font-size: 0.94rem;
+      padding: 10px 12px;
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      background: #ffffff;
+      color: var(--text);
+    }
+
+    .checkbox-row {
+      display: flex;
+      align-items: flex-start;
+      gap: 10px;
+      margin-top: 18px;
+      padding: 12px 14px;
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      background: #f8fafc;
+    }
+
+    .checkbox-row input[type="checkbox"] {
+      margin-top: 3px;
+      flex-shrink: 0;
+    }
+
+    .checkbox-row label {
+      margin: 0;
+      font-weight: 500;
+      line-height: 1.5;
+      color: #334155;
+    }
+
+    .message {
+      margin-top: 14px;
+      padding: 12px 14px;
+      border-radius: 12px;
+      font-size: 0.92rem;
+      line-height: 1.5;
+      border: 1px solid transparent;
+    }
+
+    .message-error {
+      background: var(--danger-bg);
+      border-color: var(--danger-border);
+      color: var(--danger-text);
+    }
+
+    .message-success {
+      background: var(--success-bg);
+      border-color: var(--success-border);
+      color: var(--success-text);
+    }
+
+    .actions {
+      margin-top: 18px;
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      font-size: 0.92rem;
+      font-weight: 600;
+      padding: 10px 14px;
+      border-radius: 10px;
+      border: 1px solid var(--border);
+      background: #fff;
+      color: var(--text);
+      cursor: pointer;
+      transition: 0.15s ease;
+    }
+
+    .btn:hover {
+      background: #eef2f7;
+      border-color: #cbd5e1;
+    }
+
+    .btn-primary {
+      background: var(--accent);
+      border-color: var(--accent);
+      color: #fff;
+    }
+
+    .btn-primary:hover {
+      background: var(--accent-hover);
+      border-color: var(--accent-hover);
+    }
+
+    .footer-links {
+      margin-top: 22px;
+      font-size: 0.92rem;
+      display: flex;
+      gap: 16px;
+      flex-wrap: wrap;
+    }
+
+    .footer-links a {
+      color: var(--accent);
+      font-weight: 600;
+    }
+
+    .footer-links a:hover {
+      text-decoration: underline;
+    }
+
+    @media (max-width: 860px) {
+      .content-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    @media (max-width: 720px) {
+      .page {
+        padding: 16px 12px 28px;
+      }
+
+      .hero,
+      .panel {
+        padding: 16px;
+      }
+
+      .actions {
+        flex-direction: column;
+      }
+
+      .btn {
+        width: 100%;
+      }
+    }
+  </style>
+</head>
+
+<body>
+  <div class="page">
+    <div class="container">
+      {% include "navbar.html" %}
+
+      <div class="hero">
+        <h1>Upload a dataset</h1>
+        <p class="hero-subtitle">
+          Upload your own CSV file to preview and visualise it in CODAV.
+        </p>
+      </div>
+
+      <div class="content-grid">
+        <div class="panel">
+          <h2>Data protection notice (UK GDPR)</h2>
+          <p>
+            Before uploading, ensure your dataset does <strong>not</strong> contain personal data, or that you have a lawful basis for processing it.
+          </p>
+          <p>
+            Read the UK GDPR guidance from the Information Commissioner’s Office (ICO):
+            <a href="{{ gdpr_url }}" target="_blank" rel="noopener noreferrer">
+              ICO UK GDPR guidance
+            </a>
+          </p>
+        </div>
+
+        <div class="panel form-panel">
+          <h2>Upload</h2>
+          <p>
+            Upload a CSV file (max 10MB). It will be stored in <strong>backend/uploads</strong> and added to the datasets list.
+          </p>
+
+          {% if error %}
+            <div class="message message-error">{{ error }}</div>
+          {% endif %}
+
+          {% if success %}
+            <div class="message message-success">{{ success }}</div>
+          {% endif %}
+
+          <form method="post" action="/datasets/upload" enctype="multipart/form-data">
+            <div class="field-group">
+              <label for="file">CSV file</label>
+              <input
+                type="file"
+                id="file"
+                name="file"
+                accept=".csv"
+                required
+              />
+              <div class="field-help">
+                Only CSV files are accepted for upload.
+              </div>
+            </div>
+
+            <div class="checkbox-row">
+              <input type="checkbox" id="consent" name="consent" value="yes" required />
+              <label for="consent">
+                I have read the UK GDPR notice and understand that I am responsible for ensuring the uploaded dataset is suitable for processing.
+              </label>
+            </div>
+
+            <div class="actions">
+              <button type="submit" class="btn btn-primary">Upload dataset</button>
+              <a href="/datasets-page" class="btn">Back to datasets</a>
+            </div>
+          </form>
+        </div>
+      </div>
+
+      <div class="footer-links">
+        <a href="/datasets-page">← Back to datasets</a>
+        <a href="/">Home</a>
+      </div>
+    </div>
+  </div>
+</body>
+</html>

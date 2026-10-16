@@ -1,0 +1,406 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <title>Preview All Datasets — CODAV</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <style>
+      :root {
+        --bg: #f6f8fb;
+        --surface: #ffffff;
+        --surface-soft: #f8fafc;
+        --border: #e2e8f0;
+        --text: #0f172a;
+        --muted: #64748b;
+        --primary: #2563eb;
+        --primary-hover: #1d4ed8;
+        --accent: #2563eb;
+        --accent-hover: #1d4ed8;
+        --shadow: 0 10px 30px rgba(15, 23, 42, 0.06);
+        --radius: 16px;
+        --danger-bg: #fef2f2;
+        --danger-border: #fecaca;
+        --danger-text: #b91c1c;
+      }
+
+      * {
+        box-sizing: border-box;
+      }
+
+      body {
+        font-family: Inter, system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+        margin: 0;
+        background: linear-gradient(to bottom, #f8fafc 0%, #f6f8fb 100%);
+        color: var(--text);
+      }
+
+      a {
+        color: inherit;
+        text-decoration: none;
+      }
+
+      .page {
+        max-width: 1180px;
+        margin: 0 auto;
+        padding: 24px 18px 36px;
+      }
+
+      .container {
+        background: var(--surface);
+        border: 1px solid var(--border);
+        border-radius: var(--radius);
+        box-shadow: var(--shadow);
+        padding: 22px;
+      }
+
+      .hero {
+        margin-top: 10px;
+        margin-bottom: 20px;
+        padding: 18px 20px;
+        border: 1px solid var(--border);
+        border-radius: 14px;
+        background: linear-gradient(to right, #ffffff, #f8fbff);
+      }
+
+      .hero h1 {
+        margin: 0;
+        font-size: clamp(1.6rem, 2.3vw, 2.15rem);
+        font-weight: 700;
+        letter-spacing: -0.03em;
+      }
+
+      .hero-subtitle {
+        font-size: 0.95rem;
+        color: var(--muted);
+        margin-top: 8px;
+        line-height: 1.5;
+        max-width: 760px;
+      }
+
+      .preview-grid {
+        display: grid;
+        gap: 18px;
+      }
+
+      .dataset-card {
+        padding: 18px;
+        border: 1px solid var(--border);
+        border-radius: 14px;
+        background: var(--surface-soft);
+      }
+
+      .dataset-card-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: flex-start;
+        gap: 14px;
+        flex-wrap: wrap;
+        margin-bottom: 14px;
+      }
+
+      .dataset-title {
+        margin: 0;
+        font-size: 1.05rem;
+        font-weight: 700;
+        letter-spacing: -0.01em;
+        line-height: 1.4;
+      }
+
+      .dataset-subtitle {
+        margin: 6px 0 0 0;
+        color: var(--muted);
+        font-size: 0.9rem;
+        line-height: 1.5;
+      }
+
+      .pill {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        padding: 7px 10px;
+        border-radius: 999px;
+        background: #eff6ff;
+        color: #1d4ed8;
+        font-size: 0.84rem;
+        font-weight: 600;
+        border: 1px solid #dbeafe;
+        white-space: nowrap;
+      }
+
+      .meta-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+        gap: 12px;
+        margin-bottom: 16px;
+      }
+
+      .meta-card {
+        background: #ffffff;
+        border: 1px solid var(--border);
+        border-radius: 12px;
+        padding: 12px 14px;
+      }
+
+      .meta-label {
+        display: block;
+        font-size: 0.78rem;
+        font-weight: 700;
+        color: var(--muted);
+        text-transform: uppercase;
+        letter-spacing: 0.04em;
+        margin-bottom: 6px;
+      }
+
+      .meta-value {
+        font-size: 0.93rem;
+        color: var(--text);
+        line-height: 1.45;
+        word-break: break-word;
+      }
+
+      .section {
+        margin-top: 16px;
+        padding: 16px;
+        border: 1px solid var(--border);
+        border-radius: 12px;
+        background: #ffffff;
+      }
+
+      .section h3 {
+        margin: 0 0 10px 0;
+        font-size: 0.98rem;
+        font-weight: 700;
+        letter-spacing: -0.01em;
+      }
+
+      .table-wrapper {
+        width: 100%;
+        overflow-x: auto;
+        -webkit-overflow-scrolling: touch;
+        border: 1px solid var(--border);
+        border-radius: 12px;
+        background: #ffffff;
+      }
+
+      table {
+        border-collapse: collapse;
+        width: max-content;
+        min-width: 100%;
+        font-size: 0.92rem;
+      }
+
+      th,
+      td {
+        border-bottom: 1px solid #e2e8f0;
+        padding: 10px 12px;
+        text-align: left;
+        vertical-align: top;
+        white-space: nowrap;
+      }
+
+      th {
+        background: #f8fafc;
+        color: var(--text);
+        font-weight: 700;
+      }
+
+      tbody tr:hover {
+        background: #f8fbff;
+      }
+
+      .error-box {
+        margin-top: 10px;
+        padding: 12px 14px;
+        border-radius: 12px;
+        background: var(--danger-bg);
+        border: 1px solid var(--danger-border);
+        color: var(--danger-text);
+        font-size: 0.92rem;
+        line-height: 1.5;
+      }
+
+      .code-box {
+        display: inline-block;
+        background: #f8fafc;
+        border: 1px solid var(--border);
+        border-radius: 8px;
+        padding: 4px 8px;
+        font-size: 0.86rem;
+        color: #334155;
+        word-break: break-all;
+      }
+
+      .footer-row {
+        margin-top: 14px;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        gap: 12px;
+        flex-wrap: wrap;
+      }
+
+      .small {
+        font-size: 0.9rem;
+        color: var(--muted);
+        line-height: 1.5;
+      }
+
+      .small a {
+        color: var(--accent);
+        font-weight: 600;
+      }
+
+      .small a:hover {
+        text-decoration: underline;
+      }
+
+      .footer-links {
+        margin-top: 22px;
+        font-size: 0.92rem;
+        display: flex;
+        gap: 16px;
+        flex-wrap: wrap;
+      }
+
+      .footer-links a {
+        color: var(--accent);
+        font-weight: 600;
+      }
+
+      .footer-links a:hover {
+        text-decoration: underline;
+      }
+
+      @media (max-width: 720px) {
+        .page {
+          padding: 16px 12px 28px;
+        }
+
+        .container {
+          padding: 16px;
+        }
+
+        .hero,
+        .dataset-card,
+        .section {
+          padding: 16px;
+        }
+      }
+    </style>
+  </head>
+
+  <body>
+    <div class="page">
+      <div class="container">
+        {% include "navbar.html" %}
+
+        <div class="hero">
+          <h1>Preview All Datasets</h1>
+          <p class="hero-subtitle">
+            Showing the first <strong>{{ limit }}</strong> rows for each dataset so you can compare structure, column types, and sample values in one place.
+          </p>
+        </div>
+
+        <div class="preview-grid">
+          {% for card in preview_cards %}
+            <div class="dataset-card">
+              <div class="dataset-card-header">
+                <div>
+                  <h2 class="dataset-title">{{ card.dataset.name }}</h2>
+                  <p class="dataset-subtitle">Dataset ID: {{ card.dataset.id }}</p>
+                </div>
+                <span class="pill">First {{ limit }} rows</span>
+              </div>
+
+              {% if card.error %}
+                <div class="error-box">
+                  <strong>Preview unavailable:</strong> {{ card.error }}
+                </div>
+              {% else %}
+                <div class="meta-grid">
+                  <div class="meta-card">
+                    <span class="meta-label">Rows</span>
+                    <div class="meta-value">{{ card.row_count }}</div>
+                  </div>
+
+                  <div class="meta-card">
+                    <span class="meta-label">Columns</span>
+                    <div class="meta-value">{{ card.col_count }}</div>
+                  </div>
+
+                  <div class="meta-card">
+                    <span class="meta-label">CSV path</span>
+                    <div class="meta-value">
+                      <span class="code-box">{{ card.csv_path }}</span>
+                    </div>
+                  </div>
+                </div>
+
+                <div class="section">
+                  <h3>Columns</h3>
+                  <div class="table-wrapper">
+                    <table>
+                      <thead>
+                        <tr>
+                          <th>Column</th>
+                          <th>Inferred Type</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        {% for col in card.columns %}
+                          <tr>
+                            <td>{{ col }}</td>
+                            <td>{{ card.dtypes[col] }}</td>
+                          </tr>
+                        {% endfor %}
+                      </tbody>
+                    </table>
+                  </div>
+                </div>
+
+                <div class="section">
+                  <h3>Sample Rows</h3>
+                  <div class="table-wrapper">
+                    <table>
+                      <thead>
+                        <tr>
+                          {% for col in card.columns %}
+                            <th>{{ col }}</th>
+                          {% endfor %}
+                        </tr>
+                      </thead>
+                      <tbody>
+                        {% for row in card.rows %}
+                          <tr>
+                            {% for col in card.columns %}
+                              <td>{{ row[col] }}</td>
+                            {% endfor %}
+                          </tr>
+                        {% endfor %}
+                      </tbody>
+                    </table>
+                  </div>
+
+                  <div class="footer-row">
+                    <p class="small">
+                      Open full preview:
+                      <a href="/datasets/{{ card.dataset.id }}/preview-page?limit=10">
+                        /datasets/{{ card.dataset.id }}/preview-page
+                      </a>
+                    </p>
+                  </div>
+                </div>
+              {% endif %}
+            </div>
+          {% endfor %}
+        </div>
+
+        <div class="footer-links">
+          <a href="/datasets-page">← Back to datasets</a>
+          <a href="/">Home</a>
+        </div>
+      </div>
+    </div>
+  </body>
+</html>

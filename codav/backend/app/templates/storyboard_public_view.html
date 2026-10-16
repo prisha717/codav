@@ -1,0 +1,248 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>{{ storyboard.title }} - Shared Storyboard</title>
+
+<script src="https://cdn.plot.ly/plotly-2.30.0.min.js"></script>
+
+<style>
+    :root {
+        --bg: #f6f8fb;
+        --surface: #ffffff;
+        --surface-soft: #f8fafc;
+        --border: #e2e8f0;
+        --text: #0f172a;
+        --muted: #64748b;
+        --primary: #2563eb;
+        --primary-hover: #1d4ed8;
+        --shadow: 0 10px 30px rgba(15, 23, 42, 0.06);
+        --radius: 16px;
+    }
+
+    * {
+        box-sizing: border-box;
+    }
+
+    body {
+        font-family: Inter, system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+        margin: 0;
+        background: linear-gradient(to bottom, #f8fafc 0%, #f6f8fb 100%);
+        color: var(--text);
+        letter-spacing: -0.01em;
+    }
+
+    a {
+        color: inherit;
+        text-decoration: none;
+    }
+
+    .page {
+        width: 100%;
+        padding: 24px 32px 36px;
+    }
+
+    .topbar {
+        background: var(--surface);
+        border: 1px solid var(--border);
+        border-radius: 18px;
+        padding: 22px 26px;
+        margin-bottom: 24px;
+        display: flex;
+        justify-content: space-between;
+        align-items: flex-start;
+        gap: 14px;
+        flex-wrap: wrap;
+        box-shadow: var(--shadow);
+    }
+
+    .topbar h1 {
+        margin: 0;
+        font-size: clamp(2rem, 3vw, 2.5rem);
+        font-weight: 700;
+        letter-spacing: -0.04em;
+        line-height: 1.1;
+    }
+
+    .muted {
+        color: var(--muted);
+        font-size: 1rem;
+        line-height: 1.6;
+    }
+
+    .topbar .muted {
+        margin-top: 6px;
+    }
+
+    .back-btn {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        padding: 12px 16px;
+        border: 1px solid var(--border);
+        border-radius: 10px;
+        background: var(--surface-soft);
+        font-size: 0.98rem;
+        font-weight: 600;
+        transition: 0.15s ease;
+    }
+
+    .back-btn:hover {
+        background: #eef2f7;
+        border-color: #cbd5e1;
+    }
+
+    .slides {
+        display: flex;
+        flex-direction: column;
+        gap: 22px;
+    }
+
+    .slide {
+        background: var(--surface);
+        border: 1px solid var(--border);
+        border-radius: 18px;
+        padding: 20px;
+        box-shadow: var(--shadow);
+    }
+
+    .slide h2 {
+        margin: 0 0 14px 0;
+        font-size: 1.25rem;
+        font-weight: 700;
+        letter-spacing: -0.02em;
+    }
+
+    .chart {
+        border: 1px solid var(--border);
+        border-radius: 14px;
+        padding: 14px;
+        background: #fff;
+        overflow-x: auto;
+        min-height: 340px;
+    }
+
+    .notes {
+        margin-top: 14px;
+        padding: 14px 16px;
+        border: 1px solid var(--border);
+        border-radius: 14px;
+        background: var(--surface-soft);
+        font-size: 1rem;
+        line-height: 1.7;
+        color: #334155;
+    }
+
+    .notes strong {
+        display: block;
+        margin-bottom: 6px;
+        color: var(--text);
+        font-size: 1rem;
+    }
+
+    .empty-state {
+        background: var(--surface);
+        border: 1px dashed #cbd5e1;
+        border-radius: 18px;
+        padding: 22px;
+        color: var(--muted);
+        box-shadow: var(--shadow);
+        font-size: 1rem;
+    }
+
+    @media (max-width: 720px) {
+        .page {
+            padding: 16px 12px 28px;
+        }
+
+        .topbar,
+        .slide {
+            padding: 18px;
+        }
+
+        .back-btn {
+            width: 100%;
+        }
+
+        .topbar {
+            flex-direction: column;
+            align-items: stretch;
+        }
+
+        .chart {
+            min-height: 280px;
+        }
+    }
+</style>
+</head>
+
+<body>
+<div class="page">
+
+    <div class="topbar">
+        <div>
+            <h1>{{ storyboard.title }}</h1>
+            <div class="muted">Shared read-only storyboard view</div>
+        </div>
+
+        <a href="/storyboards/{{ storyboard.id }}" class="back-btn">
+            Back to storyboard
+        </a>
+    </div>
+
+    {% if slides %}
+        <div class="slides">
+            {% for slide in slides %}
+            <div class="slide">
+
+                <h2>Slide {{ loop.index }}</h2>
+
+                <div class="chart">
+                    {% if slide.chart_json %}
+                        <div id="chart-{{ slide.id }}"></div>
+                        <script>
+                        (function(){
+                            try{
+                                const fig = JSON.parse(`{{ slide.chart_json | safe }}`);
+                                Plotly.newPlot(
+                                    "chart-{{ slide.id }}",
+                                    fig.data,
+                                    fig.layout,
+                                    {responsive: true, displaylogo: false}
+                                );
+                            }catch(e){
+                                console.error("Chart render failed:", e);
+                            }
+                        })();
+                        </script>
+
+                    {% elif slide.chart_html %}
+                        {{ slide.chart_html | safe }}
+
+                    {% else %}
+                        <div class="muted">No chart on this slide.</div>
+                    {% endif %}
+                </div>
+
+                <div class="notes">
+                    <strong>Notes</strong>
+                    {% if slide.user_notes and slide.user_notes.strip() %}
+                        {{ slide.user_notes }}
+                    {% else %}
+                        <span class="muted">No notes added for this slide.</span>
+                    {% endif %}
+                </div>
+
+            </div>
+            {% endfor %}
+        </div>
+    {% else %}
+        <div class="empty-state">
+            No slides in this storyboard yet.
+        </div>
+    {% endif %}
+
+</div>
+</body>
+</html>
